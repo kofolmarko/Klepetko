@@ -15,12 +15,19 @@ export class GameComponent implements OnInit {
     private appService: AppService
   ) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.appService.listen('test event')
+      .subscribe((data) => {
+        console.log(data);
+      })
+  }
 
   getHomepage() {
     this.appService.getHomepage().subscribe((res) => {
       this.welcomeString = res;
     });
+
+    this.appService.connect();
   }
 
 }
