@@ -21,9 +21,7 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    console.log('Somebody is up and running 🔌.');
-
-    socket.emit('test event', 'here is some data');
+    console.log(socket.id, ' has successfully connected!');
 });
 
 http.listen(3000, () => {
