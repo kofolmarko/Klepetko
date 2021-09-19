@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 import { WebsocketService } from 'src/app/Services/websocket.service';
 import { LoginScene } from './Scenes/LoginScene';
 import InputTextPlugin from 'phaser3-rex-plugins/plugins/inputtext.js';
+import { SchoolyardScene } from "./Scenes/SchoolyardScene";
 
 @Component({
   selector: 'app-game',
@@ -18,7 +19,7 @@ export class GameComponent implements OnInit {
   constructor(private wsService: WebsocketService) {
     this.config = {
       type: Phaser.AUTO,
-      scene: [LoginScene],
+      scene: [LoginScene, SchoolyardScene],
       physics: {
         default: 'matter',
         matter: {
