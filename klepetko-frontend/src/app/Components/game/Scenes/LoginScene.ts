@@ -1,29 +1,105 @@
 import InputTextPlugin from 'phaser3-rex-plugins/plugins/inputtext.js';
+import { GameData } from "../data/GameData";
 
 export class LoginScene extends Phaser.Scene {
   constructor() {
     super('LoginScene');
   }
 
-  inputText: any;
-
-  gameData = {
-    width: 1920,
-    height: 1080,
-  };
+  inputUsername: any;
+  M: any;
+  F: any;
+  playBtn: any;
+  isMale: boolean = false;
+  isFemale: boolean = false;
 
   preload() {
     this.load.image('Background', '/assets/Login/Background.png');
     this.load.image('Form', '/assets/Login/Form.png');
     this.load.image('PlayBtn', '/assets/Login/PlayBtn.png');
     this.load.image('Input', '/assets/Login/Input.png');
-    this.load.image('Moski', '/assets/Login/Moski.png');
-    this.load.image('Zenska', '/assets/Login/Zenska.png');
+    this.load.image('Male', '/assets/Login/Male.png');
+    this.load.image('Female', '/assets/Login/Female.png');
     this.load.image('Help', '/assets/Login/Help.png');
 
-    this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true);
+    this.inputUsername = this.getInputUsername();
+  }
 
-    this.inputText = new InputTextPlugin(this, 0, 0, 350, 70, {
+  create() {
+    this.add.rectangle(
+      GameData.GameDataObject.width / 2,
+      GameData.GameDataObject.height / 2,
+      1920,
+      1080,
+      0xe8e9ec
+    );
+
+    this.add.image(
+      GameData.GameDataObject.width / 2,
+      GameData.GameDataObject.height / 2,
+      'Background'
+    );
+
+    this.add.image(GameData.GameDataObject.width / 2, 540, 'Form');
+    this.playBtn = this.add.image(GameData.GameDataObject.width / 2, 780, 'PlayBtn');
+    this.add.image(GameData.GameDataObject.width / 2, 531, 'Input');
+    this.M = this.add.sprite(902, 643, 'Male');
+    this.F = this.add.sprite(1022, 643, 'Female');
+
+    this.add.existing(this.inputUsername);
+    console.log(this.inputUsername);
+
+    this.setInteractivity();
+  }
+
+  setInteractivity(): void {
+    this.playBtn
+      .on('pointerover', () => {
+        this.playBtn.scale *= 1.05;
+      })
+      .on('pointerout', () => {
+        this.playBtn.scale /= 1.05;
+      });
+
+    this.playBtn
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => {
+        let username = this.inputUsername.text;
+
+        if (username != '') {
+          this.startGame(username);
+        }
+      });
+
+    this.M.on('pointerover', () => {
+      this.M.scale *= 1.05;
+    }).on('pointerout', () => {
+      this.M.scale /= 1.05;
+    });
+
+    this.F.on('pointerover', () => {
+      this.F.scale *= 1.05;
+    }).on('pointerout', () => {
+      this.F.scale /= 1.05;
+    });
+
+    this.M.setInteractive({ useHandCursor: true }).on('pointerdown', () => {
+      this.isMale = true;
+      console.log('male', this.isMale);
+      this.F.clearTint();
+      this.M.setTint(0xf8a6ff, 0xf8a6ff, 0xf8a6ff, 0xf8a6ff);
+    });
+
+    this.F.setInteractive({ useHandCursor: true }).on('pointerdown', () => {
+      this.isMale = false;
+      console.log('female', this.isMale);
+      this.M.clearTint();
+      this.F.setTint(0xf8a6ff, 0xf8a6ff, 0xf8a6ff, 0xf8a6ff);
+    });
+  }
+
+  getInputUsername(): InputTextPlugin {
+    return new InputTextPlugin(this, 0, 0, 350, 70, {
       type: 'text',
       id: 'inputUsername',
       maxLength: 10,
@@ -43,33 +119,11 @@ export class LoginScene extends Phaser.Scene {
       top: '530px',
       left: '960px',
       align: 'center',
-
-      selectAll: false
-  });
+      selectAll: false,
+    });
   }
 
-  create() {
-    this.add.rectangle(
-      this.gameData.width / 2,
-      this.gameData.height / 2,
-      1920,
-      1080,
-      0xe8e9ec
-    );
-
-    this.add.image(
-      this.gameData.width / 2,
-      this.gameData.height / 2,
-      'Background'
-    );
-
-    this.add.image(this.gameData.width / 2, 540, 'Form');
-    const playBtn = this.add.image(this.gameData.width / 2, 780, 'PlayBtn');
-    this.add.image(this.gameData.width / 2, 531, 'Input');
-    const M = this.add.sprite(902, 643, 'Moski');
-    const F = this.add.sprite(1022, 643, 'Zenska');
-
-    this.add.existing(this.inputText);
-    console.log(this.inputText)
+  startGame(username: string): void {
+    this.scene.start('SchoolyardScene', { username: username, isMale: this.isMale });
   }
 }
